@@ -1,0 +1,123 @@
+doctype
+html
+  head
+    title= title || '이동불가능지역 추가 서비스'
+    link(rel='stylesheet' href='/main.css')
+  body
+    form#search-form(method='get')
+      span 검색기반 이동불가능지역 추가 서비스
+      input#search
+      select#type
+        option(value='') 없음
+        option(value='cafe') 카페
+        option(value='store') 상점
+        option(value='bank') 은행
+        option(value='school') 학교
+      button#search-btn.btn(type='submit') 위치검색
+      button#loc-search-btn.btn(type='button') 주변검색
+      ul#search-list
+
+    // add
+    form#pos-form(method='get')
+      span 위치기반 이동불가능지역 추가 서비스
+      input#lat-pos
+      input#ret-pos
+      button#pos-btn.btn(type='submit') 위치추가
+      script.
+        //var div = document.createElement('pos-btn.btn');
+        var button = document.getElementById('pos-btn.btn')
+        var h1 = document.createElement('h1');
+        h1.textContent = pos.name;
+            button.classList.add('btn');
+            button.textContent = '이동불가능지역 추가';
+            button.onclick = function () {
+            var xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                location.href = '/';
+                }
+            };
+            xhr.open('POST', '/location/' + pos.id + '/favorite');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({
+                name: pos.name,
+                lat: pos.lat,
+                lng: pos.lng
+            }));
+            };
+        //div.appendChild(button);
+      //ul#search-list
+
+    block content
+    script.
+      var timer;
+      document.querySelector('#search').addEventListener('keyup', function (e) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === xhr.DONE) {
+            if (xhr.status === 200) {
+              var predictions = JSON.parse(xhr.responseText);
+              var ul = document.querySelector('#search-list');
+              ul.innerHTML = '';
+              predictions.forEach(function (pred) {
+                var li = document.createElement('li');
+                li.textContent = pred.terms[0].value;
+                li.onclick = function () {
+                  location.href = '/search/' + pred.terms[0].value;
+                }
+                ul.appendChild(li);
+              });
+            } else {
+              console.error(xhr.responseText);
+            }
+          }
+        };
+        var query = this.value.trim();
+        if (timer) {
+          clearTimeout(timer);
+        }
+        timer = setTimeout(function () {
+          if (query) {
+            xhr.open('GET', '/autocomplete/' + query);
+            xhr.send();
+          }
+        }, 200);
+      });
+      document.querySelector('#search-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!this.search.value || !this.search.value.trim()) {
+          this.search.focus();
+          return false;
+        }
+        if (this.type.value) {
+          return location.href = '/search/' + this.search.value.trim()
+            + '?type=' + this.type.value;
+        }
+        this.action = '/search/' + this.search.value.trim();
+        return this.submit();
+      })
+      document.querySelector('#loc-search-btn').addEventListener('click', function (e) {
+        e.preventDefault();
+        if (navigator.geolocation) { // GPS를 지원하면
+          navigator.geolocation.getCurrentPosition(function (position) {
+            var search = document.querySelector('#search');
+            var type = document.querySelector('#type').value;
+            if (!search.value || !search.value.trim()) {
+              search.focus();
+              return false;
+            }
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
+            location.href = '/search/' + search.value.trim()
+              + '?lat=' + lat + '&lng=' + lng + '&type=' + type;
+          }, function () {
+            alert('내 위치 확인 권한을 허용하세요.');
+          }, {
+            enableHighAccuracy: false,
+            maximumAge: 0,
+            timeout: Infinity
+          });
+        } else {
+          alert('GPS를 지원하지 않습니다');
+        }
+      });
