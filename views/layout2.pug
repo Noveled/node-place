@@ -2,7 +2,7 @@ doctype
 html
   head
     title= title || '이동불가능지역 추가 서비스'
-    link(rel='stylesheet' href='/main.css')
+    link(rel='stylesheet' href='/main2.css')
   body
     form#search-form(method='get')
       span 검색기반 이동불가능지역 추가 서비스
@@ -18,33 +18,14 @@ html
       ul#search-list
 
     // add
+    
     form#pos-form(method='get')
       span 위치기반 이동불가능지역 추가 서비스
       input#lat-pos
       input#ret-pos
-      button#pos-btn.btn(type='submit') 위치추가
-      script.
-        //var div = document.createElement('pos-btn.btn');
-        var button = document.getElementById('pos-btn.btn')
-        var h1 = document.createElement('h1');
-        h1.textContent = pos.name;
-            button.classList.add('btn');
-            button.textContent = '이동불가능지역 추가';
-            button.onclick = function () {
-            var xhr = new XMLHttpRequest();
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                location.href = '/';
-                }
-            };
-            xhr.open('POST', '/location/' + pos.id + '/favorite');
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.send(JSON.stringify({
-                name: pos.name,
-                lat: pos.lat,
-                lng: pos.lng
-            }));
-            };
+      button#search-pos.btn(type='submit') 위치검색
+      
+            
         //div.appendChild(button);
       //ul#search-list
 
