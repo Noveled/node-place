@@ -3,7 +3,7 @@ input, select {
   border-radius: 4px;
   height: 37px;
   padding: 5px 10px;
-  border: 1px solid silver;
+  border: 1px solid rgb(173, 206, 250);
   vertical-align: bottom;
 }
 .btn {
@@ -14,7 +14,7 @@ input, select {
   border-radius: 4px;
   background: white;
   border: 1px solid silver;
-  color: crimson;
+  color: rgb(28, 131, 228);
   height: 37px;
   line-height: 37px;
   vertical-align: top;

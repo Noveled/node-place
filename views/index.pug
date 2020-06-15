@@ -20,12 +20,36 @@ block content
         zoom: 16,
         center: center
       });
+
+      var GreenIcon = new google.maps.MarkerImage(
+        "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+        );
+
       positions.forEach(function (pos) {
-        new google.maps.Marker({
+        // add one if
+        if(positions[positions.length-1] === pos) {
+          console.log("마지막 콘솔");
+          new google.maps.Marker({
+          // add one
+          //icon: BitmapDescriptorFactory.fromBitmap(R.drawable.marker1),
+          position: { lat: pos.lat, lng: pos.lng },
+          map: map,
+          title: pos.name,
+          icon: GreenIcon
+          /*
+          label: {
+           text: "가장 최근에 추가",
+           color: '#79E149'
+          }*/
+        });} else{
+          console.log("중간 콘솔");
+          new google.maps.Marker({
           position: { lat: pos.lat, lng: pos.lng },
           map: map,
           title: pos.name
-        });
+          });
+        }
+        
       });
     }
   script(
